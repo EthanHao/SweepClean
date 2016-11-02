@@ -130,8 +130,22 @@ public class FloorPlan  extends Observable implements java.io.Serializable {
             return PathStatus.Stair;
         
         //check if there is a wall 
+        boolean lbVertical = (x == nDestX ? false : true);
+        int nBase = (lbVertical == false ? Math.min(y, nDestY) : Math.min(x, nDestX));
+        int nFrom = (lbVertical == false ? Math.min(x, nDestX) : Math.min(y, nDestY));
+        int nTo = nFrom;
+
+        //Find the wall include lbVertical,x,y
+        boolean lbRet = true;
+        for(Map.Entry<String,Wall> entry : mMapWalls.entrySet()){
+            if(entry.getValue().CheckCanPass(lbVertical,nBase,nFrom,nTo) == false)
+            {
+                lbRet = false;
+                break;
+            }
+        }
         
-        return PathStatus.Blocked;
+        return lbRet!=false ? PathStatus.Open:PathStatus.Blocked;
     }
     
     

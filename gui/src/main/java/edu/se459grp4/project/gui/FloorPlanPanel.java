@@ -11,6 +11,7 @@ package edu.se459grp4.project.gui;
  * @author Eisen
  */
 
+import edu.se459grp4.project.cleansweep.CleanSweep;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -29,6 +30,8 @@ class FloorPlanPanel extends JPanel implements Observer{
     private int mnSqureTilesNum;
     private List<JTile> mJTiles = new ArrayList<JTile>();
     private List<JWall> mJWalls = new ArrayList<JWall>();
+    private List<JCleanSweep> mJCleanSweeps = new ArrayList<JCleanSweep>();
+    
     public boolean SetFloorPlan(FloorPlan nFloorplan)
     {
         if(nFloorplan == null)
@@ -47,6 +50,16 @@ class FloorPlanPanel extends JPanel implements Observer{
         
         this.updateUI();
         return true;
+    }
+    public boolean AddCleanSweep(CleanSweep nCleanSweep)
+    {
+        if(nCleanSweep == null)
+            return false;
+        mJCleanSweeps.add(new JCleanSweep(nCleanSweep));
+        nCleanSweep.addObserver(this);
+        this.updateUI();
+        return true;
+        
     }
     private void doDrawing(Graphics g) {
 
@@ -68,6 +81,9 @@ class FloorPlanPanel extends JPanel implements Observer{
         for(JWall item:mJWalls)
            item.Draw(g,mnSqureTileSize);
        //draw sweepcleans
+        for(JCleanSweep item:mJCleanSweeps)
+           item.Draw(g,mnSqureTileSize);
+      
     }
 
     @Override

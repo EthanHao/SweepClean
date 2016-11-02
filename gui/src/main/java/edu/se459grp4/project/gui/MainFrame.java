@@ -4,8 +4,10 @@
  * and open the template in the editor.
  */
 package edu.se459grp4.project.gui;
+import edu.se459grp4.project.cleansweep.CleanSweepManager;
 import edu.se459grp4.project.simulator.Simulator;
 import edu.se459grp4.project.simulator.models.Door;
+import edu.se459grp4.project.simulator.models.Tile;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -173,6 +175,27 @@ public class MainFrame extends JFrame {
                             lDoor.GetFrom(), 
                             lDoor.GetTo(),
                             lbOpen);
+                }
+            }
+             else if(e.getActionCommand() == "AddCleanSweep" || e.getActionCommand() == "RemoveCleanSweep" )
+            {
+                List<Tile> lChargeStations = Simulator.getInstance().GetAllChargeStations();
+                boolean lbOpen = e.getActionCommand() == "OpenDoor" ? true : false;
+                Tile lChargeStaion = (Tile)JOptionPane.showInputDialog(
+                                    mFrame,
+                                    "Please choose a chargestation for the cleansweep:\n",
+                                    e.getActionCommand() == "OpenDoor" ?"Choose a chargestation to add a CleanSweep":"Choose a door to close",
+                                    JOptionPane.PLAIN_MESSAGE,
+                                    null,
+                                    lChargeStations.toArray(),
+                                    "");
+
+                //If a string was returned, say so.
+                if ((lChargeStaion != null)) {
+                   int nID = CleanSweepManager.getInstance().CreateCleanSweep(lChargeStaion.GetX(), lChargeStaion.GetY());
+                   mFloorplanPanel.AddCleanSweep(CleanSweepManager.getInstance().GetCleanSweep(nID));
+                   //
+                   CleanSweepManager.getInstance().StartCleanCycle(nID);
                 }
             }
         }

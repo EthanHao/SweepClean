@@ -25,9 +25,9 @@ public class JDoor {
             return;
        
         boolean lbVer = mDoor.GetVertical();
-        int lnBase = mDoor.GetBase();
-        int lnFrom = mDoor.GetFrom();
-        int lnTo = mDoor.GetTo();
+        int lnBase = mDoor.GetBase() +1;
+        int lnFrom = mDoor.GetFrom() ;
+        int lnTo = mDoor.GetTo() ;
         boolean lbOpen = mDoor.GetIsOpened(); 
         if(lbOpen == false)
             g.setColor(Color.RED);

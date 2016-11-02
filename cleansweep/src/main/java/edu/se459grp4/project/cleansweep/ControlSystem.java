@@ -6,44 +6,41 @@
 package edu.se459grp4.project.cleansweep;
 
 import edu.se459grp4.project.simulator.types.Direction;
-import edu.se459grp4.project.simulator.types.PathStatus;
 
 /**
  *
- * @author Weihua
+ * @author Eisen
  */
-public class ControlSystem {
-    
-    private NavigationSensor mLeftSensor = new NavigationSensor(Direction.Left);
-    private NavigationSensor mRightSensor = new NavigationSensor(Direction.Right);
-    private NavigationSensor mUpSensor = new NavigationSensor(Direction.Up);
-    private NavigationSensor mDownSensor = new NavigationSensor(Direction.Down);
-    
-    //start the control system
-    public boolean Start()
+public class ControlSystem implements Runnable{
+    private CleanSweep mCleanSweep;
+    public ControlSystem(CleanSweep nCleanSweep)
     {
-        return true;
+        mCleanSweep = nCleanSweep;
     }
     
-    //start the control system
-    public boolean Stop()
+    public void run()
     {
-        return true;
+        //smart control run
+        try
+        {
+            while( mCleanSweep != null)
+            {
+                if(mCleanSweep.MoveOneStep(Direction.Left) == false)
+                    if(mCleanSweep.MoveOneStep(Direction.Up) == false)
+                        if(mCleanSweep.MoveOneStep(Direction.Right) == false)
+                            if(mCleanSweep.MoveOneStep(Direction.Down) == false)
+                                break;
+            
+                 Thread.sleep(1000);
+            }
+        }
+        catch(Exception e)
+        {
+            return;
+        }
     }
+
     
-    public PathStatus CheckMove(Direction nDirection,int x, int y)
-    {  
-        if(nDirection == Direction.Left)
-            return mLeftSensor.GetSensorData(x, y);
-        if(nDirection == Direction.Right)
-            return mRightSensor.GetSensorData(x, y);
-        if(nDirection == Direction.Left)
-            return mUpSensor.GetSensorData(x, y);
-        if(nDirection == Direction.Left)
-            return mDownSensor.GetSensorData(x, y);
         
-        return PathStatus.UNKNOWN;
-    }
-   
     
 }

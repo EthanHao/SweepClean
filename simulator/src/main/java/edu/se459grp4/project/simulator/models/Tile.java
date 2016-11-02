@@ -9,7 +9,7 @@ import edu.se459grp4.project.simulator.types.TileStatus;
  *
  * @author whao
  */
-public class Tile implements java.io.Serializable{
+public class Tile extends Object implements java.io.Serializable{
     private int mx;
     private int my;
     private TileStatus mTileStatus;
@@ -56,5 +56,11 @@ public class Tile implements java.io.Serializable{
         
         mnDirtVal -= nVal;
         return true;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return  (mTileStatus == TileStatus.CHARGING_STATION?"ChargeStation":"Tile") + " X "+mx+" Y "+my;
     }
 }

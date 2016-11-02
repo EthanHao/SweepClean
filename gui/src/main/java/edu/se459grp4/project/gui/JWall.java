@@ -33,13 +33,13 @@ public class JWall {
             return;
         g.setColor(Color.YELLOW);
         boolean lbVer = mWall.GetVertical();
-        int lnBase = mWall.GetBase();
-        int lnFrom = mWall.GetFrom();
+        int lnBase = mWall.GetBase() +1;
+        int lnFrom = mWall.GetFrom() ;
         int lnTo = mWall.GetTo();
         int x = lbVer == false ? lnFrom*nTileSize : lnBase*nTileSize - (nTileSize/5)/2;
         int y = lbVer == false ? lnBase*nTileSize- (nTileSize/5)/2 : lnFrom*nTileSize;
-        int lLen =  lbVer == false ? (Math.abs(lnFrom-lnTo))*nTileSize : nTileSize/5;
-        int lWid = lbVer == false? nTileSize/5: (Math.abs(lnFrom-lnTo))*nTileSize;
+        int lLen =  lbVer == false ? ((Math.abs(lnFrom-lnTo)) + 1)*nTileSize : nTileSize/5;
+        int lWid = lbVer == false? nTileSize/5: (Math.abs(lnFrom-lnTo) + 1)*nTileSize;
         g.fillRect(x, y, lLen, lWid);
         g.setColor(Color.YELLOW);
         //draw door

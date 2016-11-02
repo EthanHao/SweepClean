@@ -72,7 +72,26 @@ public class Wall implements java.io.Serializable {
             return true;
         return false;
     }
-    
+    public boolean CheckCanPass(boolean nVer,int nBase,int nFrom,int nTo)
+    {
+        if(mbVertical != nVer || mnBase != nBase)
+            return true;
+        if(nFrom >= mnFrom && nTo <= mnTo )
+        {
+            //check if there is a open door
+           
+            for(Map.Entry<String,Door> entry : mDoors.entrySet()){
+                if(entry.getValue().CheckPass(nFrom,nTo))
+                    return true;
+                    
+            }
+        
+            return false;
+        }
+            
+        return true;
+    }
+   
     public boolean OperateDoor(boolean nbVer,int nBase,int x,int y,boolean nbVal)
     {
         if(nbVer != mbVertical)

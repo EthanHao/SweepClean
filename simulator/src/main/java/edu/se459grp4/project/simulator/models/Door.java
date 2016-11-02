@@ -25,7 +25,7 @@ public class Door extends Object implements java.io.Serializable  {
         mnTo = nTo;
         mbOpen = nbOpen;
     }
-     public int GetBase()
+    public int GetBase()
     {
         return mnBase;
     }
@@ -55,7 +55,14 @@ public class Door extends Object implements java.io.Serializable  {
          mbOpen = false;
          return true;
     }
-    
+    public boolean CheckPass(int nFrom,int nTo)
+    {
+        if(mbOpen != false &&
+          (nFrom == mnFrom || nTo == mnTo) )
+            return true;
+        return false;
+        
+    }
     @Override
     public String toString()
     {
