@@ -3,22 +3,22 @@ package edu.se459grp4.project.simulator.types;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Tile {
+public enum TileStatus {
     BARE_FLOOR(1), LOW_CARPET(2), HIGH_CARPET(3), STAIRS(4), CHARGING_STATION(5);
 
     private int tileNum;
 
-    private static Map<Integer, Tile> tileMap = new HashMap<Integer, Tile>();
+    private static Map<Integer, TileStatus> tileMap = new HashMap<Integer, TileStatus>();
 
     static {
-        for (Tile tileEnum : Tile.values()) {
+        for (TileStatus tileEnum : TileStatus.values()) {
             tileMap.put(tileEnum.tileNum, tileEnum);
         }
     }
 
-    private Tile(int tile) { tileNum = tile; }
+    private TileStatus(int tile) { tileNum = tile; }
 
-    public static Tile valueOf(int tileNum) {
+    public static TileStatus valueOf(int tileNum) {
         return tileMap.get(tileNum);
     }
 }

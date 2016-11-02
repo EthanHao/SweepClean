@@ -7,10 +7,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cleansweep</artifactId>
+    <artifactId>gui</artifactId>
     <packaging>jar</packaging>
 
-    <name>cleansweep</name>
+    <name>gui</name>
     <url>http://maven.apache.org</url>
 
     <properties>
