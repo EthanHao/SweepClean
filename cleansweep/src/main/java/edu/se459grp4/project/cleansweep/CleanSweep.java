@@ -1,7 +1,11 @@
 package edu.se459grp4.project.cleansweep;
 
+import edu.se459grp4.project.simulator.Simulator;
 import edu.se459grp4.project.simulator.types.Direction;
 import edu.se459grp4.project.simulator.types.PathStatus;
+import edu.se459grp4.project.simulator.types.TileStatus;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 public class CleanSweep extends Observable {
@@ -26,6 +30,8 @@ public class CleanSweep extends Observable {
     private NavigationSensor mUpSensor = new NavigationSensor(Direction.Up);
     private NavigationSensor mDownSensor = new NavigationSensor(Direction.Down);
 
+    private DirtSensor mDirtSensor = new DirtSensor();
+    private SurfaceSensor mSurfaceSensor = new SurfaceSensor();
     //get the x coordinate of this sweep
     public int GetX() {
         return mx;
@@ -39,7 +45,21 @@ public class CleanSweep extends Observable {
     {
         return mnID;
     }
-
+    public List<Direction> GetAllDirectionCanGo()
+    {
+        List<Direction> lRetList = new ArrayList<Direction>();
+        if (PathStatus.Open == CheckMove(Direction.Left))
+            lRetList.add(Direction.Left);
+        if (PathStatus.Open == CheckMove(Direction.Up))
+            lRetList.add(Direction.Up);
+        if (PathStatus.Open == CheckMove(Direction.Right))
+            lRetList.add(Direction.Right);
+        
+        if (PathStatus.Open == CheckMove(Direction.Down))
+            lRetList.add(Direction.Down);
+        return lRetList;
+              
+    }
     public PathStatus CheckMove(Direction nDirection) {
         if (nDirection == Direction.Left) {
             return mLeftSensor.GetSensorData(mx, my);
@@ -66,7 +86,7 @@ public class CleanSweep extends Observable {
                 mx++;
             } else if (nDirection == Direction.Up) {
                 my--;
-            } else if (nDirection == Direction.Left) {
+            } else if (nDirection == Direction.Down) {
                 my++;
             }
 
@@ -77,21 +97,18 @@ public class CleanSweep extends Observable {
         return false;
     }
 
-    //start this sweep
-    public boolean Start() {
-        //mControlSystem.Start();
-        //set the inital status.
-        //suppose all tiles are dirty
-        //and it suppose start from a charge station and power is full and the vacuum capacity is empty.
-        //so if the vacuum capacity value is not zero then start will fail.
-
-        return true;
+   
+    public TileStatus DetectSurfaceType()
+    {
+       return mSurfaceSensor.GetSensorData(mx, my);
     }
-
-    //stop this sweep
-    public boolean Stop() {
-        //mControlSystem.Stop();
-        return true;
+    public int DetectDirtValue()
+    {
+        return mDirtSensor.GetSensorData(mx, my);
     }
-
+    public boolean SweepUp(int nVal)
+    {
+        return Simulator.getInstance().SweepUp(mx, my, nVal);
+    }
+    
 }

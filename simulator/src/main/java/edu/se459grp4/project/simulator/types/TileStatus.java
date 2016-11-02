@@ -21,4 +21,16 @@ public enum TileStatus {
     public static TileStatus valueOf(int tileNum) {
         return tileMap.get(tileNum);
     }
+    public static double Weight(TileStatus nTileStatus)
+    {
+        switch(nTileStatus)
+        {
+            case BARE_FLOOR: return 1f;
+            case LOW_CARPET: return 1.5f;
+            case HIGH_CARPET:return 2f;
+            case CHARGING_STATION: return 1f;
+            default: return 0.0f;
+        }
+    
+    }
 }

@@ -51,10 +51,12 @@ public class Tile extends Object implements java.io.Serializable{
     }
     public boolean Sweep(int nVal)
     {
-        if(mnDirtVal < nVal)
+        if(mnDirtVal == 0)
             return false;
         
         mnDirtVal -= nVal;
+        if(mnDirtVal < 0)
+            mnDirtVal = 0;
         return true;
     }
     
