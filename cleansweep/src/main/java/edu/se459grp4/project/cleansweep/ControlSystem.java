@@ -25,6 +25,7 @@ public class ControlSystem implements Runnable {
     private CleanSweep mCleanSweep;
     private TilesGraph mTileGraph = new TilesGraph();
     private Queue<TileNode> mMissionQueue = new LinkedList<TileNode>();
+    private boolean mbGoback = false;
     public ControlSystem(CleanSweep nCleanSweep) {
         mCleanSweep = nCleanSweep;
     }
@@ -34,13 +35,18 @@ public class ControlSystem implements Runnable {
         try {
             while (mCleanSweep != null) {
                 //Check if there is a next mission, it 
-                if(!mMissionQueue.isEmpty())
-                {
+                if (!mMissionQueue.isEmpty()) {
                     TileNode lMovetoNode = mMissionQueue.poll();
-                    mCleanSweep.MoveTo(lMovetoNode.GetX(),lMovetoNode.GetY());
+                    mCleanSweep.MoveTo(lMovetoNode.GetX(), lMovetoNode.GetY());
+                    if(mbGoback && lMovetoNode.TileStatus() == TileStatus.CHARGING_STATION)
+                    {
+                        //end up all cycle.
+                        break;
+                    }
+                    Thread.sleep(500);
                     continue;
                 }
-                
+
                 //detect tilestatus and sweep ,Set Visit
                 TileStatus lTileStatus = mCleanSweep.DetectSurfaceType();
                 int nDirtVal = mCleanSweep.DetectDirtValue();
@@ -56,9 +62,7 @@ public class ControlSystem implements Runnable {
 
                 //Visit
                 mTileGraph.Visit(mCleanSweep.GetX(), mCleanSweep.GetY(), lTileStatus);
-                
-                
-                
+
                 //Get all the path it can go
                 List<Direction> lListCanGo = mCleanSweep.GetAllDirectionCanGo();
                 if (lListCanGo.isEmpty()) {
@@ -70,43 +74,26 @@ public class ControlSystem implements Runnable {
                     int x = mCleanSweep.GetX();
                     int y = mCleanSweep.GetY();
                     //Add Node and path to the graph
-                    if (item == Direction.Left) {
-                        x--;
-                    }
-                    if (item == Direction.Right) {
-                        x++;
-                    }
-                    if (item == Direction.Up) {
-                        y--;
-                    }
-                    if (item == Direction.Down) {
-                        y++;
-                    }
-                    mTileGraph.AddEdge(mCleanSweep.GetX(), mCleanSweep.GetY(),x,y, TileStatus.HIGH_CARPET);
+                    if (item == Direction.Left) x--;
+                    if (item == Direction.Right)  x++;
+                    if (item == Direction.Up)  y--;
+                    if (item == Direction.Down) y++;
+                    mTileGraph.AddEdge(mCleanSweep.GetX(), mCleanSweep.GetY(), x, y, TileStatus.HIGH_CARPET);
 
                     if (mTileGraph.IsVisited(x, y) == false) {
                         lListAfterMatched.add(item);
                     }
                 }
                 //If find some way I can not go because of closing door, then we need to update the graph
-                List<Direction> lListCannotGo = mCleanSweep.GetAllDirectionCanGo();
-                for(Direction item : lListCannotGo)
-                {
-                     int x = mCleanSweep.GetX();
+                List<Direction> lListCannotGo = mCleanSweep.GetAllDirectionCannotGo();
+                for (Direction item : lListCannotGo) {
+                    int x = mCleanSweep.GetX();
                     int y = mCleanSweep.GetY();
                     //Add Node and path to the graph
-                    if (item == Direction.Left) {
-                        x--;
-                    }
-                    if (item == Direction.Right) {
-                        x++;
-                    }
-                    if (item == Direction.Up) {
-                        y--;
-                    }
-                    if (item == Direction.Down) {
-                        y++;
-                    }
+                    if (item == Direction.Left) x--; 
+                    if (item == Direction.Right)  x++;
+                    if (item == Direction.Up)   y--; 
+                    if (item == Direction.Down) y++;
                     mTileGraph.DeleteEdge(x, y, mCleanSweep.GetX(), mCleanSweep.GetY());
 
                 }
@@ -118,22 +105,29 @@ public class ControlSystem implements Runnable {
                     if (!lListUnvisitedTileNode.isEmpty()) {
                         //pich a shortest one
                         List<String> lRetPath = new ArrayList<String>();
-                        Double ldb = ChooseShortestPath(mCleanSweep.GetX(),mCleanSweep.GetY(),lListUnvisitedTileNode,lRetPath);
-                        if(0 != Double.compare(ldb, Double.MAX_VALUE))
-                        {
+                        Double ldb = ChooseShortestPath(mCleanSweep.GetX(), mCleanSweep.GetY(), lListUnvisitedTileNode, lRetPath);
+                        if (0 != Double.compare(ldb, Double.MAX_VALUE)) {
                             //check the power and add the mission
-                            for(String ls:lRetPath)
-                            {
+                            for (String ls : lRetPath) {
                                 mMissionQueue.add(mTileGraph.GetTileNode(ls));
                             }
                         }
                     } else {
                         //Pick a random direction from lList
-                        Random lRandom = new Random();
-                        int n = lRandom.nextInt(lListCanGo.size());
-                        mCleanSweep.MoveOneStep(lListCanGo.get(n));
-                        
+                       // Random lRandom = new Random();
+                      // int n = lRandom.nextInt(lListCanGo.size());
+                       // mCleanSweep.MoveOneStep(lListCanGo.get(n));
+
                         //go to charge station
+                        List<String> lRetPath = new ArrayList<String>();
+                        Double ldb = ChooseANearestChargeStation(mCleanSweep.GetX(), mCleanSweep.GetY(),  lRetPath);
+                        if (0 != Double.compare(ldb, Double.MAX_VALUE)) {
+                            //check the power and add the mission
+                            for (String ls : lRetPath) {
+                                mMissionQueue.add(mTileGraph.GetTileNode(ls));
+                            }
+                        }
+                        mbGoback = true;
                         //break
                     }
                 } else {
@@ -141,30 +135,33 @@ public class ControlSystem implements Runnable {
                 }
 
                 //Let people can show the move, dont't be so fast
-                Thread.sleep(200);
+                Thread.sleep(500);
             }
         } catch (Exception e) {
             return;
         }
     }
 
-    private double ChooseShortestPath(int x,int y, List<TileNode> nListNode, List<String> nretPath)
-    {
+    private double ChooseShortestPath(int x, int y, List<TileNode> nListNode, List<String> nretPath) {
         List<Double> ldbList = new ArrayList<Double>();
         Double ldb = Double.MAX_VALUE;
-        for(TileNode item : nListNode)
-        {
+        for (TileNode item : nListNode) {
             List<String> nArrayPath = new ArrayList<String>();
             Double lTemp = mTileGraph.GetShortestPath(x, y, item.GetX(), item.GetY(), nArrayPath);
-            if(lTemp < ldb)
-            {
+            if (lTemp < ldb) {
                 ldb = lTemp;
                 nretPath.clear();
                 nretPath.addAll(nArrayPath);
-               // nretPath = nArrayPath;
+                // nretPath = nArrayPath;
             }
         }
-        
+
         return ldb;
+    }
+    
+    private double ChooseANearestChargeStation(int x,int y,List<String> nRetPath)
+    {
+        List<TileNode> llistChargeStation = mTileGraph.GetChargeStationNode();
+        return ChooseShortestPath(mCleanSweep.GetX(), mCleanSweep.GetY(), llistChargeStation, nRetPath);
     }
 }

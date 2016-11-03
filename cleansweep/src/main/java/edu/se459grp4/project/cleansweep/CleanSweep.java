@@ -15,13 +15,12 @@ public class CleanSweep extends Observable {
     private int mx;
     private int my;
 
-    public CleanSweep(int nID,int nx,int ny)
-    {
+    public CleanSweep(int nID, int nx, int ny) {
         mnID = nID;
         mx = nx;
         my = ny;
     }
-   
+
     //public 
     //
     //  each clean sweep has 4 navigation sensor
@@ -32,6 +31,7 @@ public class CleanSweep extends Observable {
 
     private DirtSensor mDirtSensor = new DirtSensor();
     private SurfaceSensor mSurfaceSensor = new SurfaceSensor();
+
     //get the x coordinate of this sweep
     public int GetX() {
         return mx;
@@ -41,39 +41,47 @@ public class CleanSweep extends Observable {
     public int GetY() {
         return my;
     }
-    public int GetID()
-    {
+
+    public int GetID() {
         return mnID;
     }
-    public List<Direction> GetAllDirectionCanGo()
-    {
+
+    public List<Direction> GetAllDirectionCanGo() {
         List<Direction> lRetList = new ArrayList<Direction>();
-        if (PathStatus.Open == CheckMove(Direction.Left))
+        if (PathStatus.Open == CheckMove(Direction.Left)) {
             lRetList.add(Direction.Left);
-        if (PathStatus.Open == CheckMove(Direction.Up))
+        }
+        if (PathStatus.Open == CheckMove(Direction.Up)) {
             lRetList.add(Direction.Up);
-        if (PathStatus.Open == CheckMove(Direction.Right))
+        }
+        if (PathStatus.Open == CheckMove(Direction.Right)) {
             lRetList.add(Direction.Right);
-        
-        if (PathStatus.Open == CheckMove(Direction.Down))
+        }
+
+        if (PathStatus.Open == CheckMove(Direction.Down)) {
             lRetList.add(Direction.Down);
+        }
         return lRetList;
-              
+
     }
-    public List<Direction> GetAllDirectionCannotGo()
-    {
+
+    public List<Direction> GetAllDirectionCannotGo() {
         List<Direction> lRetList = new ArrayList<Direction>();
-        if (PathStatus.Open != CheckMove(Direction.Left))
+        if (PathStatus.Open != CheckMove(Direction.Left)) {
             lRetList.add(Direction.Left);
-        if (PathStatus.Open != CheckMove(Direction.Up))
+        }
+        if (PathStatus.Open != CheckMove(Direction.Up)) {
             lRetList.add(Direction.Up);
-        if (PathStatus.Open != CheckMove(Direction.Right))
+        }
+        if (PathStatus.Open != CheckMove(Direction.Right)) {
             lRetList.add(Direction.Right);
-        
-        if (PathStatus.Open != CheckMove(Direction.Down))
+        }
+
+        if (PathStatus.Open != CheckMove(Direction.Down)) {
             lRetList.add(Direction.Down);
+        }
         return lRetList;
-              
+
     }
 
     public PathStatus CheckMove(Direction nDirection) {
@@ -128,9 +136,9 @@ public class CleanSweep extends Observable {
     public int DetectDirtValue() {
         return mDirtSensor.GetSensorData(mx, my);
     }
-    public boolean SweepUp(int nVal)
-    {
+
+    public boolean SweepUp(int nVal) {
         return Simulator.getInstance().SweepUp(mx, my, nVal);
     }
-    
+
 }
