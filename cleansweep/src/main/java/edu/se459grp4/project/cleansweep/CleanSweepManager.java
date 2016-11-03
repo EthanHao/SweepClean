@@ -29,7 +29,7 @@ public class CleanSweepManager {
     public int CreateCleanSweep(int x,int y)
     {
         int nID = mnCurrentID++;
-        CleanSweep lCleanSweep = new CleanSweep(nID,x,y);
+        CleanSweep lCleanSweep = new CleanSweep(nID,100.0,1000,x,y);
         mMapCleanSweep.put(nID, lCleanSweep);
         return nID;
     }

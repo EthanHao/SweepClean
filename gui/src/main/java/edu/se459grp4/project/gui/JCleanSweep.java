@@ -35,7 +35,10 @@ public class JCleanSweep {
         int y = lnY*nTileSize ;
         g.fillOval(x+nTileSize/4, y+nTileSize/4, nTileSize/2, nTileSize/2);
         //g.fillRect(nTileSize, nTileSize, nTileSize, nTileSize);
-        g.drawString(""+mCleanSweep.GetID(),x+nTileSize/4 + 5 , y+nTileSize/4 + 5);
+        g.drawString(""+mCleanSweep.GetID() +" P"+mCleanSweep.GetPowerLevel() + " V"+mCleanSweep.GetVacuumLevel(),
+                x+nTileSize/4 + 5 , 
+                y+nTileSize/4 + 5);
+        
         return;
     }
 }

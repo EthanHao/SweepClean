@@ -36,8 +36,12 @@ public class JTile {
       
         g.fillRect(mTile.GetX()*nTileSize-1, mTile.GetY()*nTileSize-1, nTileSize-2, nTileSize-2);
         
-        g.setColor(Color.RED);
-        g.drawString(""+mTile.GetDirtVal(), mTile.GetX()*nTileSize + nTileSize/2 -5, mTile.GetY()*nTileSize + nTileSize/2 -5);
+        if(mTile.GetStatus() != TileStatus.CHARGING_STATION &&
+            mTile.GetStatus() != TileStatus.STAIRS    )
+        {
+            g.setColor(Color.RED);
+            g.drawString(""+mTile.GetDirtVal(), mTile.GetX()*nTileSize + nTileSize/2 -5, mTile.GetY()*nTileSize + nTileSize/2 -5);
+        }
         return;
     }
 }

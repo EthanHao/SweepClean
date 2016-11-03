@@ -184,16 +184,17 @@ public class FloorPlan  extends Observable implements java.io.Serializable {
         }
         return false;
     }
-    public boolean SweepUp(int x,int y,int nVal)
+    public int SweepUp(int x,int y,int nVal)
     {
         Tile lTile = mMapTiles.get(GenerateKey(x,y));
-        if(lTile != null && lTile.Sweep(nVal))
+        if(lTile != null )
         {
+            int lnVal = lTile.Sweep(nVal);
             setChanged();
             notifyObservers(lTile);
-            return true;
+            return lnVal;
         } 
-        return false;
+        return 0;
     }
     public boolean OperateDoor(boolean nbVer,int nBase,int x,int y,boolean nbVal)
     {

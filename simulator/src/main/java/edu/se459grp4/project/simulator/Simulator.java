@@ -81,11 +81,11 @@ public class Simulator {
         return TileStatus.BARE_FLOOR;
     }
     
-    public boolean SweepUp(int x,int y,int nVal)
+    public int SweepUp(int x,int y,int nVal)
     {
          if(mFloorPlan != null)
             return mFloorPlan.SweepUp(x, y,nVal);
-        return false;
+        return 0;
     }
     public boolean OperateDoor(boolean nVer,int nBase,int nFrom,int nTo,boolean bOpen)
     {

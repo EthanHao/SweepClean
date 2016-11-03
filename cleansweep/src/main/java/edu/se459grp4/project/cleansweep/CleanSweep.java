@@ -10,17 +10,30 @@ import java.util.Observable;
 
 public class CleanSweep extends Observable {
 
+    private   int mnMaxVacuum ;
+    private   Double mdbMaxPower ;
     //define the location tile coordinate
     private int mnID;
     private int mx;
     private int my;
+    private Double mdbPowerValue;
+    private int mnVacuumCapacityValue;
 
-    public CleanSweep(int nID, int nx, int ny) {
+    public CleanSweep(int nID, 
+            Double ndbPowerValue,
+            int nVacuumCapacityValue,
+            int nx,
+            int ny) {
+        mdbPowerValue = ndbPowerValue;
+        mdbMaxPower = ndbPowerValue;
+        mnVacuumCapacityValue = nVacuumCapacityValue;
+        mnMaxVacuum = nVacuumCapacityValue;
         mnID = nID;
         mx = nx;
         my = ny;
     }
-
+    
+    
     //public 
     //
     //  each clean sweep has 4 navigation sensor
@@ -122,6 +135,17 @@ public class CleanSweep extends Observable {
     }
 
     public boolean MoveTo(int x, int y) {
+        
+        if(x == mx)
+        {
+            if( PathStatus.Open != CheckMove(y < my ? Direction.Up : Direction.Down))
+                  return false;
+        }
+        else {
+            if( PathStatus.Open != CheckMove(x < mx ? Direction.Left : Direction.Right))
+                  return false;
+        
+        }
         mx = x;
         my = y;
         setChanged();
@@ -137,8 +161,48 @@ public class CleanSweep extends Observable {
         return mDirtSensor.GetSensorData(mx, my);
     }
 
-    public boolean SweepUp(int nVal) {
-        return Simulator.getInstance().SweepUp(mx, my, nVal);
+    public int SweepUp(int nVal) {
+        int nVacummVal = Simulator.getInstance().SweepUp(mx, my, nVal);
+        ExhaustVacuume(nVacummVal);
+        return nVacummVal;
     }
 
+    public Double GetPowerLevel()
+    {
+        return mdbPowerValue;
+    }
+    public Double ExhaustPower(Double ndb)
+    {
+        mdbPowerValue -= ndb;
+        setChanged();
+        notifyObservers();
+        return mdbPowerValue;
+    }
+    public int GetVacuumLevel()
+    {
+        return mnVacuumCapacityValue;
+    }
+    public int  ExhaustVacuume(int nnVacuumVal)
+    {
+        mnVacuumCapacityValue -= nnVacuumVal;
+        setChanged();
+        notifyObservers();
+        return mnVacuumCapacityValue;
+    }
+    public int CleanVacuum()
+    {
+        mnVacuumCapacityValue = mnMaxVacuum;
+        setChanged();
+        notifyObservers();
+        return mnVacuumCapacityValue;
+    }
+    
+     public Double Recharge()
+    {
+        mdbPowerValue = mdbMaxPower;
+        setChanged();
+        notifyObservers();
+        return mdbPowerValue;
+    }
+   
 }

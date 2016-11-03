@@ -108,7 +108,7 @@ public class TilesGraph {
         }
 
         if (nFromX == nDestX && nFromY == nDestY) {
-            return Double.MAX_VALUE;
+            return 0.0;
         }
         //We are going to use Dijkstra's Algorithm to find the shortest path
 
@@ -233,7 +233,8 @@ public class TilesGraph {
         }
         TileNode lSourceNode = mNodeMap.get(TileNode.GenerateKeyString(nFromX, nFromY));
         if (lSourceNode == null) {
-            return false;
+            lSourceNode = new TileNode(nFromX, nFromY, nTileStatus, NodeStatus.eNodeNoVisited);
+            mNodeMap.put(lSourceNode.toString(), lSourceNode);
         }
 
         Boolean lbRet = true;
@@ -273,6 +274,18 @@ public class TilesGraph {
             mGraphMap.put(lDestNode.toString(), lSubmap);
         }
         return lbRet;
+    }
+    
+    public Double GetWeight(int nFromX,int nFromY,int nDestX,int nDestY)
+    {
+        Double ldbWeight = 0.0;
+         if (mGraphMap.containsKey(TileNode.GenerateKeyString(nFromX, nFromY))) {
+            //If existed then get the submap
+            HashMap<String, Double> lSubmap = mGraphMap.get(TileNode.GenerateKeyString(nFromX, nFromY));
+            ldbWeight = lSubmap.get(TileNode.GenerateKeyString(nDestX, nDestY));
+
+        } 
+        return ldbWeight;
     }
 
 }
