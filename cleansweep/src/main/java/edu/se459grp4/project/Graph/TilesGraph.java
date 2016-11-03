@@ -33,6 +33,26 @@ public class TilesGraph {
             return true;
         return false;
     }
+    public TileNode GetTileNode(String nsKey)
+    {
+        return mNodeMap.get(nsKey);
+    }
+    public List<TileNode> GetChargeStationNode()
+    {
+         List<TileNode> lListNode = new ArrayList<TileNode>();
+        for(Map.Entry<String,TileNode> entry:mNodeMap.entrySet())
+            if(entry.getValue().TileStatus() == TileStatus.CHARGING_STATION)
+                lListNode.add(entry.getValue());
+        return lListNode;
+    }
+    public List<TileNode> GetUnvisitedNode()
+    {
+        List<TileNode> lListNode = new ArrayList<TileNode>();
+        for(Map.Entry<String,TileNode> entry:mNodeMap.entrySet())
+            if(entry.getValue().NodeStatus() == NodeStatus.eNodeNoVisited)
+                lListNode.add(entry.getValue());
+        return lListNode;
+    }
     public boolean Visit(int x,int y,TileStatus nTileStatus)
     {
         TileNode lNode = mNodeMap.get(TileNode.GenerateKeyString(x, y));
@@ -73,69 +93,71 @@ public class TilesGraph {
     //return : >0 && < Double.MAX_VALUE means We get a shortest way answer
     //         Double.MAX_VALUE means we can not find a way
   
-   /* public boolean GetShortestPath( String nsInputNode,  //Source Node
-            String nsDestinationNode,             //Destination Node
-            ArrayList<String> nArrayPath )
+    public double GetShortestPath( int nFromX,
+            int nFromY,
+            int nDestX,
+            int nDestY,             //Destination Node
+            List<String> nArrayPath
+            )
          
     {
-        if(nsInputNode == null || nsDestinationNode == null || 
-                nsInputNode.isEmpty() || nsDestinationNode.isEmpty() || 
-                nArrayPath == null )
-           return false;
+        if(nArrayPath == null )
+           return Double.MAX_VALUE;
         
         
-        nsInputNode = nsInputNode.toUpperCase();
-        nsDestinationNode = nsDestinationNode.toUpperCase();
-        if(!mGraphMap.containsKey(nsInputNode))
-           return false;
-        if(!mGraphMap.containsKey(nsDestinationNode))
-           return false;
+        //nsInputNode = nsInputNode.toUpperCase();
+        // = nsDestinationNode.toUpperCase();
+        if(!mGraphMap.containsKey(TileNode.GenerateKeyString(nFromX, nFromY)))
+           return Double.MAX_VALUE;
+        if(!mGraphMap.containsKey(TileNode.GenerateKeyString(nDestX, nDestY)))
+           return Double.MAX_VALUE;
          
-        if(nsInputNode == nsDestinationNode)
-           return false;
+        if(nFromX == nDestX && nFromY == nDestY)
+           return Double.MAX_VALUE;
         //We are going to use Dijkstra's Algorithm to find the shortest path
        
         //Construct the line from the GraphMap
-        HashMap<String, Node> lRecRow = new HashMap<String, Node>();
+        HashMap<String, GraphNode> lRecRow = new HashMap<String, GraphNode>();
         {
+            
             Set set = mGraphMap.entrySet();
             Iterator lIte = set.iterator();
             while (lIte.hasNext()) {
                 Map.Entry me = (Map.Entry) lIte.next();
                 String lsKey = me.getKey().toString();
-                if (lsKey != nsInputNode) {
-                    lRecRow.put(lsKey, new Node(nsInputNode, Double.MAX_VALUE, NodeStatus.eNodeNoVisited));
+                if (lsKey != TileNode.GenerateKeyString(nFromX, nFromY)) {
+                    lRecRow.put(lsKey, new GraphNode(TileNode.GenerateKeyString(nFromX, nFromY),Double.MAX_VALUE, NodeStatus.eNodeNoVisited));
                 }
             }
         }
 
         //We use a Queue to store those node waiting for handling
-        LinkedList<Node> lQueue = new LinkedList <Node>();
-        lQueue.add(new Node(nsInputNode,0.00,NodeStatus.eNodeNoVisited));
+        LinkedList<GraphNode> lQueue = new LinkedList <GraphNode>();
+        lQueue.add(new GraphNode(TileNode.GenerateKeyString(nFromX, nFromY) ,Double.MAX_VALUE,NodeStatus.eNodeNoVisited));
         
       
         while(!lQueue.isEmpty())
         {
-            Node lTempNode = lQueue.removeFirst();
-            String lsFromNode = lTempNode.msNodeName;
+            GraphNode lTempNode = lQueue.removeFirst();
+            String lsFromNode = lTempNode.NodeName();
             Double ldbShortestDistande = lTempNode.Weight();
             //Iterate the output edge from this node
             //check the minimum weight
             {
-                HashMap<String, Node> lRow = mGraphMap.get(lsFromNode);
+                HashMap<String, Double> lRow = mGraphMap.get(lsFromNode);
                 Set set = lRow.entrySet();
                 Iterator lIte = set.iterator();
                 while (lIte.hasNext()) {
                     Map.Entry me = (Map.Entry) lIte.next();
                     String lsToNodeKey = me.getKey().toString();
-                    Double lsToWeight = ((Node) me.getValue()).Weight();
+                    Double lsToWeight =  (Double)me.getValue();
                     Double ldbTempWeight = ldbShortestDistande + lsToWeight;
 
                     //Do not deal the node with the same name of original source node
-                    if (lsToNodeKey != nsInputNode) {
+                    if (lsToNodeKey != TileNode.GenerateKeyString(nFromX, nFromY)) {
                         if (ldbTempWeight < lRecRow.get(lsToNodeKey).Weight()) {
                             lRecRow.get(lsToNodeKey).SetWeight(ldbTempWeight);
-                            lRecRow.get(lsToNodeKey).SetName(lsFromNode);
+                            lRecRow.get(lsToNodeKey).SetNodeName(lsFromNode);
                         }
                     }
                 }
@@ -150,40 +172,59 @@ public class TilesGraph {
                 while (lIte.hasNext()) {
                     Map.Entry me = (Map.Entry) lIte.next();
                     String lsToNodeKey = me.getKey().toString();
-                    Node lTemp = (Node) me.getValue();
-                    if (lTemp.Status() == NodeStatus.eNodeNoVisited && lTemp.Weight() < ldbMinimunWeight) {
+                    GraphNode lTemp = (GraphNode) me.getValue();
+                    if (lTemp.NodeStatus()== NodeStatus.eNodeNoVisited && lTemp.Weight() < ldbMinimunWeight) {
                         ldbMinimunWeight = lTemp.Weight();
                         lsMinWeightNodeName = lsToNodeKey;
                     }
                 }
 
                 if (!lsMinWeightNodeName.isEmpty()) {
-                    lRecRow.get(lsMinWeightNodeName).SetStatus(NodeStatus.eNodeVisited);
-                    lQueue.add(new Node(lsMinWeightNodeName, ldbMinimunWeight, NodeStatus.eNodeInVisitingQueue));
+                    lRecRow.get(lsMinWeightNodeName).SetNodeStatus(NodeStatus.eNodeVisited);
+                    lQueue.add(new GraphNode(lsMinWeightNodeName, ldbMinimunWeight, NodeStatus.eNodeInVisitingQueue));
                 }
             }
 
         }
         
         //Generate the path
-        nArrayPath.add(nsDestinationNode);
-        Node lFinalNode = lRecRow.get(nsDestinationNode);
-        Double ndbShortestWeight = lFinalNode.mdbWeight;
-        String lsTempName = lFinalNode.Name();
+        nArrayPath.add(TileNode.GenerateKeyString(nDestX, nDestY));
+        GraphNode lFinalNode = lRecRow.get(TileNode.GenerateKeyString(nDestX, nDestY));
+        //nRetWeight = lFinalNode.Weight();
+        String lsTempName = lFinalNode.NodeName();
         do
         {
             nArrayPath.add(lsTempName);
             lFinalNode = lRecRow.get(lsTempName);
-            lsTempName = lFinalNode.Name();
-        }while(lsTempName != nsInputNode);
-        nArrayPath.add(nsInputNode);
+            lsTempName = lFinalNode.NodeName();
+        }while(lsTempName != TileNode.GenerateKeyString(nFromX, nFromY));
+        nArrayPath.add(TileNode.GenerateKeyString(nFromX, nFromY));
         //Reverse the array
         Collections.reverse(nArrayPath);
         
-        return true;
+        return lFinalNode.Weight();
     }
     
-    */
+    public Boolean DeleteEdge(int nFromX,int nFromY,int nDestX,int nDestY)
+    {
+        
+        if(nFromX == nDestX && nFromY == nDestY)
+            return false;
+        
+        if (mGraphMap.containsKey( TileNode.GenerateKeyString(nFromX, nFromY))){
+            //If existed then get the submap
+            HashMap<String, Double> lSubmap = mGraphMap.get(TileNode.GenerateKeyString(nFromX, nFromY));
+            lSubmap.remove(TileNode.GenerateKeyString(nDestX, nDestY));
+
+        }
+        if (mGraphMap.containsKey( TileNode.GenerateKeyString(nDestX, nDestY))){
+            //If existed then get the submap
+            HashMap<String, Double> lSubmap = mGraphMap.get(TileNode.GenerateKeyString(nDestX, nDestY));
+            lSubmap.remove(TileNode.GenerateKeyString(nFromX, nFromY));
+
+        }
+        return true;
+    }
     //This is the main way to construce a graph
     //We need to add edges one by one
     //Note: this is an undirect graph, so we need to add a converse edge simultaneously
@@ -194,7 +235,7 @@ public class TilesGraph {
         
         if(nFromX == nDestX && nFromY == nDestY)
             return false;
-        TileNode lSourceNode = mNodeMap.get(TileNode.GenerateKeyString(nDestX, nDestY));
+        TileNode lSourceNode = mNodeMap.get(TileNode.GenerateKeyString(nFromX, nFromY));
         if(lSourceNode == null)
             return false;
         
@@ -203,7 +244,7 @@ public class TilesGraph {
         TileNode lDestNode = mNodeMap.get(TileNode.GenerateKeyString(nDestX, nDestY));
         if(lDestNode == null)
         {
-            lDestNode = new TileNode(nDestX,nDestY,nTileStatus,NodeStatus.eNodeVisited);
+            lDestNode = new TileNode(nDestX,nDestY,nTileStatus,NodeStatus.eNodeNoVisited);
             mNodeMap.put(lDestNode.toString(), lDestNode);
         }
         else

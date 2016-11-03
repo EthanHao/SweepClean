@@ -26,6 +26,8 @@ public class TileNode extends Object {
           
             meStatus = neValue;
         }
+        public int GetX(){return mx;}
+        public int GetY(){return my;}
         public NodeStatus NodeStatus() {return meStatus;}
         public void SetNodeStatus(NodeStatus neVal) { meStatus = neVal;}  
        
