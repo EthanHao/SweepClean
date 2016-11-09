@@ -1,6 +1,6 @@
-# SE459_group4
+# SweepClean
 
-Group 4 Clean Sweep
+This application is a simulation for a fictional clean sweeper. You can know how the clean sweeper works through this applicaion hopefully.
 
 Module list:
 
