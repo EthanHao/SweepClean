@@ -37,7 +37,8 @@ Run Instruction:
 if done, the ui should like this:
 The yellow tile stands for charge station  
 The dark tile is stair  
-The light gray is low carpet  
-The dark grag is high carpet  
-The blue is bare floor  
+The light gray tile is low carpet floor  
+The dark gray tile is high carpet floor   
+The blue is bare floor
+We can add more charge stations and clean sweepers.   
 ![](/portal/demo.png)
