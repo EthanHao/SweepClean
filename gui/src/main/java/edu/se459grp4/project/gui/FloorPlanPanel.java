@@ -48,7 +48,7 @@ class FloorPlanPanel extends JPanel implements Observer{
         for(Wall item : lListWall)
            mJWalls.add(new JWall(item));
         
-        this.updateUI();
+        this.repaint();
         return true;
     }
     public boolean AddCleanSweep(CleanSweep nCleanSweep)
@@ -96,6 +96,7 @@ class FloorPlanPanel extends JPanel implements Observer{
     public void update(Observable o, Object arg) {
    
         //need to set the clip rect to improve the perfomance
-        this.updateUI();
+        //get the invalidate rect, then just update this rect to improve the performance of drawing
+        this.repaint();
     }
 }

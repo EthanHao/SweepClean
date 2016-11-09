@@ -41,21 +41,21 @@ public class Door extends Object implements java.io.Serializable  {
     {
         return mbVertical;
     }
-    public boolean GetIsOpened()
+    public synchronized  boolean GetIsOpened()
     {
         return mbOpen;
     }
-    public boolean Open()
+    public synchronized  boolean Open()
     {
         mbOpen = true;
         return true;
     }
-    public boolean Close()
+    public synchronized  boolean Close()
     {
          mbOpen = false;
          return true;
     }
-    public boolean CheckPass(int nFrom,int nTo)
+    public synchronized  boolean CheckPass(int nFrom,int nTo)
     {
         if(mbOpen != false &&
           (nFrom == mnFrom || nTo == mnTo) )

@@ -46,12 +46,12 @@ public class CleanSweep extends Observable {
     private SurfaceSensor mSurfaceSensor = new SurfaceSensor();
 
     //get the x coordinate of this sweep
-    public int GetX() {
+    public synchronized int GetX() {
         return mx;
     }
 
     //get the y coordinate of this sweep
-    public int GetY() {
+    public synchronized int GetY() {
         return my;
     }
 
@@ -97,7 +97,7 @@ public class CleanSweep extends Observable {
 
     }
 
-    public PathStatus CheckMove(Direction nDirection) {
+    public synchronized PathStatus CheckMove(Direction nDirection) {
         if (nDirection == Direction.Left) {
             return mLeftSensor.GetSensorData(mx, my);
         }
@@ -114,27 +114,8 @@ public class CleanSweep extends Observable {
         return PathStatus.UNKNOWN;
     }
 
-    public boolean MoveOneStep(Direction nDirection) {
-        if (PathStatus.Open == CheckMove(nDirection)) {
 
-            if (nDirection == Direction.Left) {
-                mx--;
-            } else if (nDirection == Direction.Right) {
-                mx++;
-            } else if (nDirection == Direction.Up) {
-                my--;
-            } else if (nDirection == Direction.Down) {
-                my++;
-            }
-
-            setChanged();
-            notifyObservers();
-            return true;
-        }
-        return false;
-    }
-
-    public boolean MoveTo(int x, int y) {
+    public synchronized boolean MoveTo(int x, int y) {
         
         if(x == mx)
         {
@@ -149,7 +130,7 @@ public class CleanSweep extends Observable {
         mx = x;
         my = y;
         setChanged();
-        notifyObservers();
+        notifyObservers(this);
         return true;
     }
 
@@ -161,47 +142,47 @@ public class CleanSweep extends Observable {
         return mDirtSensor.GetSensorData(mx, my);
     }
 
-    public int SweepUp(int nVal) {
+    public synchronized int SweepUp(int nVal) {
         int nVacummVal = Simulator.getInstance().SweepUp(mx, my, nVal);
         ExhaustVacuume(nVacummVal);
         return nVacummVal;
     }
 
-    public Double GetPowerLevel()
+    public synchronized Double GetPowerLevel()
     {
         return mdbPowerValue;
     }
-    public Double ExhaustPower(Double ndb)
+    public synchronized Double ExhaustPower(Double ndb)
     {
         mdbPowerValue -= ndb;
         setChanged();
-        notifyObservers();
+        notifyObservers(this);
         return mdbPowerValue;
     }
-    public int GetVacuumLevel()
+    public synchronized int GetVacuumLevel()
     {
         return mnVacuumCapacityValue;
     }
-    public int  ExhaustVacuume(int nnVacuumVal)
+    public synchronized int  ExhaustVacuume(int nnVacuumVal)
     {
         mnVacuumCapacityValue -= nnVacuumVal;
         setChanged();
-        notifyObservers();
+        notifyObservers(this);
         return mnVacuumCapacityValue;
     }
-    public int CleanVacuum()
+    public synchronized int CleanVacuum()
     {
         mnVacuumCapacityValue = mnMaxVacuum;
         setChanged();
-        notifyObservers();
+        notifyObservers(this);
         return mnVacuumCapacityValue;
     }
     
-     public Double Recharge()
+     public synchronized Double Recharge()
     {
         mdbPowerValue = mdbMaxPower;
         setChanged();
-        notifyObservers();
+        notifyObservers(this);
         return mdbPowerValue;
     }
    

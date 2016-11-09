@@ -30,26 +30,26 @@ public class Tile extends Object implements java.io.Serializable{
     {
         return my;
     }
-    public TileStatus GetStatus()
+    public synchronized TileStatus GetStatus()
     {
         return mTileStatus;
     }
-     public boolean SetStatus(TileStatus nStatus)
+     public synchronized boolean SetStatus(TileStatus nStatus)
     {
         mTileStatus = nStatus;
         return true;
     }
-    public int GetDirtVal()
+    public synchronized  int GetDirtVal()
     {
         return mnDirtVal;
     }
-    public boolean SetDirtVal(int nVal)
+    public synchronized  boolean SetDirtVal(int nVal)
     {
         mnDirtVal = nVal;
         return true;
         
     }
-    public int Sweep(int nVal)
+    public synchronized  int Sweep(int nVal)
     {
         if(mnDirtVal == 0)
             return 0;
