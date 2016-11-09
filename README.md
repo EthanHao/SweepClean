@@ -1,6 +1,6 @@
 # SweepClean
 
-This application is a simulation for a fictional clean sweeper. You can know how the clean sweeper works through this applicaion hopefully.
+This application is a simulation for a fictional clean sweeper. You can know how the clean sweeper works through this application hopefully.
 
 Module list:
 
