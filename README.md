@@ -17,7 +17,14 @@ Module list:
 
   >Provide the method to log everything .
   
-Module Dependency likes the image below:
+Module Dependency like the image below:
 
 ![](/portal/module.png)
 
+The main Sequence Diagram between modules is like the following image :
+
+![](/portal/sequence.png)
+
+The main class Diagram is like the following image :
+
+![](/portal/class.png)
