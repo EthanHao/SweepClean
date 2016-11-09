@@ -35,5 +35,9 @@ Run Instruction:
 3,Add a clean sweeper through the menu  
 
 if done, the ui should like this:
-The yellow tile stands for charge station
+The yellow tile stands for charge station  
+The dark tile is stair  
+The light gray is low carpet  
+The dark grag is high carpet  
+The blue is bare floor  
 ![](/portal/demo.png)
