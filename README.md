@@ -28,3 +28,12 @@ The main Sequence Diagram between modules is like the following image :
 The main class Diagram is like the following image :
 
 ![](/portal/class.png)
+
+Run Instruction:
+1,Run GUI project  
+2,Load a floor plan through the menu  
+3,Add a clean sweeper through the menu  
+
+if done, the ui should like this:
+The yellow tile stands for charge station
+![](/portal/demo.png)
