@@ -119,11 +119,11 @@ public class CleanSweep extends Observable {
         
         if(x == mx)
         {
-            if( PathStatus.Open != CheckMove(y < my ? Direction.Up : Direction.Down))
+            if( Math.abs(y-my ) > 1 || PathStatus.Open != CheckMove(y < my ? Direction.Up : Direction.Down))
                   return false;
         }
         else {
-            if( PathStatus.Open != CheckMove(x < mx ? Direction.Left : Direction.Right))
+            if( Math.abs(x-mx ) > 1 ||PathStatus.Open != CheckMove(x < mx ? Direction.Left : Direction.Right))
                   return false;
         
         }
